@@ -46,6 +46,7 @@ export function ApiProvider({ children }) {
         console.log({ formData, data });
         const res = await postRequest(registrationUrl, {uid: user.user.uid, name: data.username, email: data.email});
         toast.success(res.message);
+        navigate('/')
       }
     } catch (e) {
       handleFirebaseError(e);
