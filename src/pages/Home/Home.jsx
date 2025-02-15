@@ -2,10 +2,12 @@ import React, { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import trimCanvas from "trim-canvas"; // ✅ Import trimCanvas
 import { useAuth } from "../../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const { currentUser } = useAuth();
 
+  const navigate = useNavigate();
   const sigCanvas = useRef(null); // ✅ Initialize with null
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -123,6 +125,10 @@ export default function Home() {
       <button onClick={handleSubmit} className="btn btn-primary mt-3">
         Submit Data
       </button>
+
+
+
+      <button onClick={() => navigate('/register')}>Navigate to register</button>
     </div>
   );
 }
