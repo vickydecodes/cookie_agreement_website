@@ -14,7 +14,7 @@ export default function AppRoutes() {
         <Routes>
           <Route path="/register" element={<Register />} />
           <Route path="/login" element={<Admin />} />
-          <Route path="/admin" element={<Admin />} />
+          <Route path="/" element={<Admin />} />
           <Route path="/upload-template" element={<UploadTemplate />} />
           <Route path="/sign-agreement/:uid" element={<SignAgreement />} />
         </Routes>
