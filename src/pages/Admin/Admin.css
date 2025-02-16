@@ -1,0 +1,35 @@
+.create_btn{
+    padding: 20px 60px;
+    background-color: black;
+    color: white;
+    border:0;
+    font-size: 18px;
+    border-radius: 6px;
+}
+
+.input_field{
+    padding: 24px;
+    border: 1px solid #ccc;
+    font-size: 24px;
+}
+
+.copy_btn{
+    padding: 20px 60px;
+    background-color: #ccc;
+    color: black;
+    border:0;
+    font-size: 18px;
+    border-radius: 6px;
+}
+
+
+ @media (max-width: 768px) {
+    .input_field{
+        padding: 20px;
+        font-size: 20px;
+    }
+    .create_btn{
+        padding: 10px 20px;
+    }
+    
+ }

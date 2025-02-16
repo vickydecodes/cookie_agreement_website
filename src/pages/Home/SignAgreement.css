@@ -1,0 +1,23 @@
+.canva{
+    border: 2px solid #ccc;
+    border-radius: 6px;
+}
+
+.submit, .clear{
+    border: 0;
+    padding: 20px 40px;
+}
+
+.submit{
+    background-color: black;
+    color: white;
+    border-radius: 6px;
+    margin: 0px 0px 0px 30px;
+}
+
+.clear {
+    padding: 20px 60px;
+    border: 1px solid red;
+    color: red;
+    border-radius: 6px;
+}
