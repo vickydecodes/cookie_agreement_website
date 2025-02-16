@@ -142,6 +142,7 @@ export default function SignAgreement() {
       <button onClick={handleSubmit} className="submit">
         Submit Agreement
       </button>
+      <button onClick={() => navigate('/admin')}>Admin page</button>
       </div>
 
       </div>
