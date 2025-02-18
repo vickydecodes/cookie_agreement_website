@@ -1,21 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Admin.css";
 import Lottie from "lottie-react";
 import { postRequest } from "../../utils/ApiService";
 import Navbar from "../components/Navbar/Navbar";
 import admin_animation from "../../assets/animations/admin_animation.json";
 import { useApi } from "../../contexts/ApiContext";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Admin() {
   const [email, setEmail] = useState("");
   const [clientName, setClientName] = useState("");
 
-  const { generatedLink, create_user } = useApi();
+  const { generatedLink, create_user, isAdmin } = useApi();
 
   const handleCreateUser = async () => {
     const data = { email: email, client_name: clientName };
     create_user(data);
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAdmin) {
+      toast.error("We tracked you. Dont try to log in .");
+      navigate("/login");
+    }
+  });
 
   return (
     <div className="h-100">

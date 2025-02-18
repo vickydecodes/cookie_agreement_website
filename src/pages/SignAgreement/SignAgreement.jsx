@@ -2,22 +2,36 @@ import React, { useEffect, useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 import trimCanvas from "trim-canvas"; // ✅ Import trimCanvas
 import { useAuth } from "../../contexts/AuthContext";
-import { useNavigate, useParams } from "react-router-dom";
+import {
+  useNavigate,
+  useParams,
+  useLocation,
+  useSearchParams,
+} from "react-router-dom";
 import Lottie from "lottie-react";
 import agreement_animation from "../../assets/animations/agreement_animation.json";
 import "./SignAgreement.css";
 import Navbar from "../components/Navbar/Navbar";
 import cookie_loader from "../../assets/animations/cookie_loader.json";
 import { toast } from "react-toastify";
+import { useApi } from "../../contexts/ApiContext";
+import NotFound from "../NotFound/NotFound";
 
 export default function SignAgreement() {
-  const { currentUser } = useAuth();
+  const { sign_agreement, fetch_client, client } = useApi();
+
+  const location = useLocation();
+
+  const [searchParams] = useSearchParams();
+  const uid = searchParams.get("uid");
+
+  console.log(uid);
 
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth <= 950);
+      setIsMobile(window.innerWidth <= 1000);
     };
 
     handleResize();
@@ -30,17 +44,15 @@ export default function SignAgreement() {
 
   const navigate = useNavigate();
 
-  const { uid } = useParams();
-
   useEffect(() => {
     if (!uid) {
       toast.error("You are not authorized to access this page");
-      navigate("/register");
+      navigate('/notfound')
     }
-  });
+    fetch_client(uid);
+  }, []);
 
-  const sigCanvas = useRef(null); // ✅ Initialize with null
-  const [loading, setLoading] = useState(false);
+  const sigCanvas = useRef(null);
   const [formData, setFormData] = useState({
     name: "",
     phone_number: "",
@@ -73,49 +85,34 @@ export default function SignAgreement() {
       signature: signature,
       uid: uid,
     };
-    setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/generate-pdf`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestData),
-      });
-
-      const result = await response.json();
-      if (result) {
-        console.log(result);
-        toast.success(result.message)
-        setFormData({ name: "", phone_number: "", date: "" });
-      } else {
-        alert("Error generating PDF");
+      if(!requestData.name || !requestData.phone_number || !signature){
+        return toast.error('Please fill all the fields!')
       }
+      sign_agreement(requestData);
     } catch (error) {
       console.error("Error:", error);
-      alert("Server error, please try again later.");
-    } finally {
-      setLoading(false);
     }
   };
 
   return (
-    <div className="100vh" style={{ height: "calc(100vh - 120px)" }}>
+    <div className="100vh" style={{ height: "calc(100vh + 120px)" }}>
       <Navbar is_client={true} />
-      <div className="row g-0 h-100">
-        {loading ? (
-          <div className="col-12 d-flex justify-content-center align-items-center">
-            <Lottie
-              animationData={cookie_loader}
-              loop={true}
-              style={{ width: "80%", height: "500px" }}
-            />{" "}
-          </div>
-        ) : (
-          <>
-            <div className="col-md-6 d-flex flex-column justify-content-center align-items-center">
-             <div className="w-75">
-             <div className="mb-3 mt-5">
-                <label className="form-label">
-                  <h4>Name</h4>
+      <div className="row g-0 h-100 d-flex justify-content-center">
+        <>
+          <div className="col-md-9 d-flex flex-column justify-content-center align-items-center">
+            <div className="w-md-75 p-md-0 p-4">
+              <h2>Heyyy {client.client_name}!</h2>
+              <h4>
+                {" "}
+                We're excited to have you on board! 🎉 Your journey with us
+                begins now, and we’re here to ensure a smooth and efficient
+                experience.
+              </h4>
+              <div className="mb-3 mt-5">
+                <label className="form-label d-flex align-items-center">
+                  <h4 className="m-0">Name </h4>
+                  <span className="ms-2">i.e, Name to be in the agreement</span>
                 </label>
                 <input
                   type="text"
@@ -147,7 +144,7 @@ export default function SignAgreement() {
                   penColor="black"
                   canvasProps={{
                     width: isMobile ? 300 : 650,
-                    height:  isMobile ? 200 : 150,
+                    height: isMobile ? 200 : 150,
                     className: "canva",
                   }}
                 />
@@ -164,18 +161,16 @@ export default function SignAgreement() {
                   </button>
                 </div>
               </div>
-             </div>
             </div>
-            <div className="col-md-6  d-flex justify-content-center align-items-center">
-              <Lottie
-                animationData={agreement_animation}
-                loop={true}
-                style={{ width: "100%", height: "auto" }}
-              />{" "}
-            </div>
-          </>
-        )}
+          </div>
+        </>
       </div>
     </div>
   );
+}
+
+{
+  /* <div className="col-md-6  d-flex justify-content-center align-items-center">
+<embed src="/template/template_agreement.pdf" style={{height: '100%', width: '90%'}} type="application/pdf" />
+</div> */
 }

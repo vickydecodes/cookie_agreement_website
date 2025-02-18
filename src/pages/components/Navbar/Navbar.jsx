@@ -3,31 +3,30 @@ import "./Navbar.css";
 import { BiMenuAltRight } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 
-export default function Navbar({ is_client = false}) {
-
-    if(is_client){
-        return <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary p-md-4 px-3 pt-4 ">
+export default function Navbar({ is_client = false }) {
+  if (is_client) {
+    return (
+      <nav className="navbar navbar-expand-lg fixed-top bg-body-tertiary p-md-4 px-3 pt-4 ">
         <div className="container-fluid d-flex justify-content-center align-items-center">
-          <a className="navbar-brand d-flex  justify-content-center align-items-center gap-4" href="#">
+          <a
+            className="navbar-brand d-flex  justify-content-center align-items-center gap-4"
+            href="#"
+          >
             <img
               src="/imgs/cookie_logo.jpeg"
-              height={ "40" }
+              height={"40"}
               style={{ border: "3px solid black" }}
               alt=""
             />
-                  <h2 className="text-start">Sign Agreement</h2>
-
+            <h2 className="text-start">Sign Agreement</h2>
           </a>
-          
-  
-          
         </div>
       </nav>
-    }
-
+    );
+  }
 
   return (
-    <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary p-md-4 px-3 pt-4">
+    <nav className="navbar navbar-expand-lg fixed-top bg-body-tertiary p-md-4 px-3 pt-4">
       <div className="container-fluid">
         <a className="navbar-brand" href="#">
           <img

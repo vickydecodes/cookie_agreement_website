@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail
 } from "firebase/auth";
+import Loading from "../pages/components/Loading/Loading";
 
 const AuthContext = createContext();
 
@@ -87,7 +88,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={value}>
-      {loading ? 'loading' : children}
+      {loading ? <Loading/> : children}
       </AuthContext.Provider>
   );
 }

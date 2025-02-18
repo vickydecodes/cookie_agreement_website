@@ -1,0 +1,40 @@
+.sort_buttons button{
+    padding: 10px;
+    width: 100%;
+    height: 100%;
+    font-size: 18px;
+    background: transparent;
+    color: black;
+    border-radius: 6px;
+    border: 0;
+}
+
+.clients_page{
+    padding-top: 120px;
+}
+
+.search{
+    width: 100%;
+    padding: 10px;
+    border: 2px solid black;
+    border-radius: 6px;
+    color: black
+}
+
+.search::placeholder{
+    color: black
+}
+
+.client_container{
+    transition: all 4s ease-in-out
+}
+
+.sort_buttons{
+    margin-bottom: 40px;
+}
+
+.sort_section h5{
+    font-weight: 600;
+    font-size: 24px;
+    margin-bottom: 20px;
+}

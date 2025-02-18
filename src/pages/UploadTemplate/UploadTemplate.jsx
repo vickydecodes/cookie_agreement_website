@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import "./UploadTemplate.css";
 import Lottie from "lottie-react";
 import admin_animation from "../../assets/animations/admin_animation.json";
 import Navbar from "../components/Navbar/Navbar";
+import { useNavigate } from "react-router-dom";
+import { useApi } from "../../contexts/ApiContext";
 
 export default function UploadTemplate() {
   const [file, setFile] = useState(null);
+
+  const {isAdmin} = useApi();
 
   const handleUpload = async () => {
     if (!file) return alert("Please select a file!");
@@ -29,6 +33,15 @@ export default function UploadTemplate() {
       console.error(error);
     }
   };
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!isAdmin) {
+      toast.alert("We tracked you. Dont try to log in .");
+      return navigate("/login");
+    }
+  });
 
   return (
     <div className="100vh" style={{ height: "calc(100vh - 120px)" }}>

@@ -18,7 +18,7 @@ export function useApi() {
   return useContext(ApiContext);
 }
 
-const { registrationUrl } = urls;
+const { creationUrl, unsign_agreement_url, sign_agreement_url, fetch_client_url,fetch_clients_url,complete_project_url } = urls;
 
 console.log(urls);
 
@@ -35,57 +35,44 @@ export function ApiProvider({ children }) {
 
   const [loading, setLoading] = useState(false);
   const [generatedLink, setGeneratedLink] = useState("");
-  const [clients, setClients] = useState([])
+  const [clients, setClients] = useState([]);
+  const [client, setClient] = useState({});
+  const [admin, setAdmin] = useState({});
+  const [isAdmin, setIsAdmin] = useState(() => {
+    const is_verified_admin = getCookie("isAdmin");
 
-  const register = async (data) => {
-    try {
-      removeCookie("userCredentials");
-      setLoading(true);
-      const user = await signup(data.email, data.password);
-      if (user) {
-        const formData = createFormData(data, { uid: user.user.uid }, [
-          "password",
-        ]);
-        console.log({ formData, data });
-        const res = await postRequest(registrationUrl, {
-          uid: user.user.uid,
-          name: data.username,
-          email: data.email,
-        });
-        toast.success(res.message);
-        navigate("/");
-      }
-    } catch (e) {
-      handleFirebaseError(e);
-      navigate("/register");
-    } finally {
-      setLoading(false);
+    if (!is_verified_admin) {
+      return false;
+    } else {
+      return true;
     }
-  };
+  });
+
+  console.log({ admin: admin });
+
 
   const login = async (data) => {
     setLoading(true);
     try {
-      removeCookie("userCredentials");
       const user = await loginFirebase(data.email, data.password);
-
       if (user) {
-        navigate("/");
+        navigate("/admin");
+        setCookie('isAdmin', true)
       } else {
         toast.error("Invalid Credentials");
       }
-      // fetchUserData(user.user.uid, true);
     } catch (e) {
-      console.log(e);
-      handleFirebaseError(e);
+      toast.error('Black sheep, you are not the admin.')
     } finally {
       setLoading(false);
     }
   };
 
   const create_user = async (data) => {
+    setLoading(true);
+
     try {
-      const response = await postRequest("http://localhost:5000/create-user", {
+      const response = await postRequest( creationUrl, {
         email: data.email,
         client_name: data.client_name,
       });
@@ -98,38 +85,90 @@ export function ApiProvider({ children }) {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const unsign_agreement = async (uid) => {
-      try {
-        const response = await postRequest(
-          "http://localhost:5000/unsign-agreement",
-          { uid: uid }
-        );
-        toast.success(response.message);
-        fetch_clients();
-      } catch (e) {
-        console.log(e);
-        toast.error(e.message);
-      }
-    };
+    setLoading(true);
 
-
-  const fetch_clients = async () => {
     try {
-      const res = await getRequest("http://localhost:5000/clients");
-      console.log('res', res)
-      setClients(res.clients);
+      const response = await postRequest(
+        unsign_agreement_url,
+        { uid: uid }
+      );
+      toast.success(response.message);
+      fetch_clients();
     } catch (e) {
-      toast.error(e.message || 'Something Went Wrong fetching clients.')
-      console.log(e)
+      console.log(e);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const sign_agreement = async(data) => {
+  const complete_project = async (uid) => {
+    setLoading(true);
+    try {
+      const response = await postRequest(
+        complete_project_url,
+        { uid: uid }
+      );
+      toast.success(response.message);
+      fetch_clients();
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  }
+  const fetch_clients = async () => {
+    setLoading(true);
+
+    try {
+      const res = await getRequest(fetch_clients_url);
+      setClients(res.clients);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetch_client = async (uid) => {
+    setLoading(true);
+    try {
+      const res = await getRequest(`${fetch_client_url}/${uid}`);
+      console.log("res", res);
+      setClient(res.client);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sign_agreement = async (data) => {
+    setLoading(true);
+    try {
+      console.log(data);
+      const res = await fetch(sign_agreement_url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+      const response = await res.json();
+      console.log(response);
+      fetch_clients();
+
+      toast.success(response.message);
+    } catch (e) {
+      console.log(e);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   ////UTILITY FUNCTIONS////
 
@@ -156,10 +195,8 @@ export function ApiProvider({ children }) {
   /// USE EFFECT HOOKS
 
   useEffect(() => {
-fetch_clients()
-  }, [])
-
-
+    fetch_clients();
+  }, []);
 
   /// ERROR HANDLING FOR FIREBASE ERRORS
 
@@ -227,7 +264,18 @@ fetch_clients()
 
   ///ERROR HANDLING FOR LOADINGS AND ERRORS
 
-  const value = { register, login, generatedLink, create_user, clients, fetch_clients, unsign_agreement };
+  const value = {
+    login,
+    generatedLink,
+    create_user,
+    clients,
+    fetch_clients,
+    unsign_agreement,
+    sign_agreement,
+    complete_project,
+    fetch_client,
+    client,
+  };
 
   if (loading) {
     console.log("Loading state: ", loading);

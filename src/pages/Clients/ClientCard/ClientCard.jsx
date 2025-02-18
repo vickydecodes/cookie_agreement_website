@@ -4,7 +4,7 @@ import { FaCopy } from "react-icons/fa";
 import { toast } from "react-toastify";
 import { useApi } from "../../../contexts/ApiContext";
 export default function ClientCard({ client }) {
-  const { unsign_agreement } = useApi();
+  const { unsign_agreement, complete_project } = useApi();
 
   const copythelink = () => {
     try {
@@ -14,6 +14,10 @@ export default function ClientCard({ client }) {
     } catch (e) {
       toast.error(e.message || "Couldn't copy the url");
     }
+  };
+
+  const handle_complete_project = (uid) => {
+    complete_project(uid);
   };
 
   const handle_client_unsign = (uid) => {
@@ -39,7 +43,7 @@ export default function ClientCard({ client }) {
           </p>
           <p>
             <strong>Phone number: </strong>
-            {"1234567890"}
+            {client.phone_number}
           </p>
           <p>
             <strong>Agreement Signed:</strong>{" "}
@@ -65,22 +69,25 @@ export default function ClientCard({ client }) {
             )}
           </p>
           <p>
-            {client.is_project_completed ? (
+            {client.is_agreement_updated && !client.is_project_completed ? (
               <>
                 <p>
-                  <button className="">Mark completed</button>
-                </p>
-              </>
-            ) : (
-              <>
-                <p>
-                  <button onClick={() => handle_client_unsign(client.uid)}>
-                    Unsign Agreement
+                  <button onClick={() => handle_complete_project(client.uid)}>
+                    Mark completed
                   </button>
                 </p>
               </>
+            ) : (
+              ""
             )}
           </p>
+          {!client.is_project_completed ? (
+            <p>
+            <button onClick={() => handle_client_unsign(client.uid)}>
+              Unsign Agreement
+            </button>
+          </p>
+          ): ('')}
         </div>
       </div>
       {client.is_project_completed ? (
