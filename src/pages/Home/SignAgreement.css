@@ -5,19 +5,22 @@
 
 .submit, .clear{
     border: 0;
-    padding: 20px 40px;
+    padding: 20px 30px;
+    height: 100%;
+    width: 100%;
 }
 
 .submit{
     background-color: black;
     color: white;
     border-radius: 6px;
-    margin: 0px 0px 0px 30px;
 }
 
 .clear {
-    padding: 20px 60px;
+    padding: 20px 30px;
     border: 1px solid red;
     color: red;
     border-radius: 6px;
+    height: 100%;
+    background-color: transparent;
 }

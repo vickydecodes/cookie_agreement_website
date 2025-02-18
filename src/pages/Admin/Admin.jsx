@@ -1,39 +1,27 @@
 import React, { useState } from "react";
-import './Admin.css'
+import "./Admin.css";
 import Lottie from "lottie-react";
 import { postRequest } from "../../utils/ApiService";
 import Navbar from "../components/Navbar/Navbar";
 import admin_animation from "../../assets/animations/admin_animation.json";
+import { useApi } from "../../contexts/ApiContext";
 
 export default function Admin() {
   const [email, setEmail] = useState("");
   const [clientName, setClientName] = useState("");
-  const [generatedLink, setGeneratedLink] = useState("");
+
+  const { generatedLink, create_user } = useApi();
 
   const handleCreateUser = async () => {
-    try {
-      const response = await postRequest("http://localhost:5000/create-user", {
-        email,
-        client_name: clientName
-      });
-
-      const data = response;
-      if (data) {
-        setGeneratedLink(data.link);
-      } else {
-        alert("Failed to create user");
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Error creating user");
-    }
+    const data = { email: email, client_name: clientName };
+    create_user(data);
   };
 
   return (
-    <div className="">
-      <Navbar is_client={false}/>
-      <div className="row g-0">
-        <div className="col-md-6 d-flex justify-content-center align-items-center flex-column">
+    <div className="h-100">
+      <Navbar />
+      <div className="row g-0 h-100">
+        <div className="col-md-6 order-md-1 order-2 d-flex justify-content-center align-items-center flex-column">
           <div className="mb-4 w-75">
             <h3>Create User</h3>
             <input
@@ -54,10 +42,11 @@ export default function Admin() {
               Create User
             </button>
           </div>
-          <div className="mt-3 w-75">
-            <h3>Generated Link</h3>
+          <div className="mt-3 w-75 pb-5">
             {generatedLink && (
               <div>
+                <h3>Generated Link</h3>
+
                 <input
                   type="text"
                   className="form-control input_field my-3"
@@ -74,7 +63,7 @@ export default function Admin() {
             )}
           </div>
         </div>
-        <div className="col-md-6  d-flex justify-content-center align-items-center">
+        <div className="col-md-6 order-md-2 order-1 d-flex justify-content-center align-items-center">
           <Lottie
             animationData={admin_animation}
             loop={true}

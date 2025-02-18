@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import { useAuth } from "./AuthContext";
 import urls from "../utils/ApiUrls";
 import { getCookie, setCookie, removeCookie } from "../utils/CookieService";
+import Loading from "../pages/components/Loading/Loading";
 
 const ApiContext = createContext();
 
@@ -33,6 +34,8 @@ export function ApiProvider({ children }) {
   } = useAuth();
 
   const [loading, setLoading] = useState(false);
+  const [generatedLink, setGeneratedLink] = useState("");
+  const [clients, setClients] = useState([])
 
   const register = async (data) => {
     try {
@@ -44,9 +47,13 @@ export function ApiProvider({ children }) {
           "password",
         ]);
         console.log({ formData, data });
-        const res = await postRequest(registrationUrl, {uid: user.user.uid, name: data.username, email: data.email});
+        const res = await postRequest(registrationUrl, {
+          uid: user.user.uid,
+          name: data.username,
+          email: data.email,
+        });
         toast.success(res.message);
-        navigate('/')
+        navigate("/");
       }
     } catch (e) {
       handleFirebaseError(e);
@@ -62,10 +69,10 @@ export function ApiProvider({ children }) {
       removeCookie("userCredentials");
       const user = await loginFirebase(data.email, data.password);
 
-      if(user){
-        navigate('/')
-      }else{
-        toast.error('Invalid Credentials')
+      if (user) {
+        navigate("/");
+      } else {
+        toast.error("Invalid Credentials");
       }
       // fetchUserData(user.user.uid, true);
     } catch (e) {
@@ -76,7 +83,53 @@ export function ApiProvider({ children }) {
     }
   };
 
+  const create_user = async (data) => {
+    try {
+      const response = await postRequest("http://localhost:5000/create-user", {
+        email: data.email,
+        client_name: data.client_name,
+      });
 
+      if (response) {
+        toast.success("Successfully created the user");
+        setGeneratedLink(response.link);
+      } else {
+        toast.error("Failed to create user");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const unsign_agreement = async (uid) => {
+      try {
+        const response = await postRequest(
+          "http://localhost:5000/unsign-agreement",
+          { uid: uid }
+        );
+        toast.success(response.message);
+        fetch_clients();
+      } catch (e) {
+        console.log(e);
+        toast.error(e.message);
+      }
+    };
+
+
+  const fetch_clients = async () => {
+    try {
+      const res = await getRequest("http://localhost:5000/clients");
+      console.log('res', res)
+      setClients(res.clients);
+    } catch (e) {
+      toast.error(e.message || 'Something Went Wrong fetching clients.')
+      console.log(e)
+    }
+  };
+
+  const sign_agreement = async(data) => {
+
+  }
 
   ////UTILITY FUNCTIONS////
 
@@ -99,6 +152,14 @@ export function ApiProvider({ children }) {
   }
 
   ///END UTILS
+
+  /// USE EFFECT HOOKS
+
+  useEffect(() => {
+fetch_clients()
+  }, [])
+
+
 
   /// ERROR HANDLING FOR FIREBASE ERRORS
 
@@ -166,11 +227,11 @@ export function ApiProvider({ children }) {
 
   ///ERROR HANDLING FOR LOADINGS AND ERRORS
 
-  const value = { register, login };
+  const value = { register, login, generatedLink, create_user, clients, fetch_clients, unsign_agreement };
 
   if (loading) {
     console.log("Loading state: ", loading);
-    return <div>Loading.....</div>;
+    return <Loading />;
   }
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;

@@ -1,5 +1,6 @@
-body {
+body, #root {
     font-family: "Nunito", sans-serif !important;
+    height: 100vh
 }
 
 /* Custom Scrollbar */

@@ -1,0 +1,42 @@
+.client-card h3{
+    font-size: 30px;
+}
+
+.client-card input{
+    margin: 10px;
+    margin-left: 0px;
+    padding: 20px 40px;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 230px;
+    border: 1px solid #ccc
+}
+
+.client-card button{
+    padding: 10px 40px;
+    background-color: black;
+    color: white;
+    border: 0;
+    border-radius: 6px;
+    width: 250px;
+    cursor: pointer !important;
+}
+
+.client-card .disabled{
+    background-color: grey;
+}
+
+
+
+.copy_button{
+    background-color: white !important;
+    color: black !important;
+    border: 0 !important;
+    width: 50px;
+    padding: 10 !important
+}
+
+.baked-img{
+    height: 300px;
+    width: 100%;
+}

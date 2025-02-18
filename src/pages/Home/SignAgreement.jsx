@@ -4,13 +4,29 @@ import trimCanvas from "trim-canvas"; // ✅ Import trimCanvas
 import { useAuth } from "../../contexts/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
 import Lottie from "lottie-react";
-import agreement_animation from '../../assets/animations/agreement_animation.json'
-import './SignAgreement.css'
+import agreement_animation from "../../assets/animations/agreement_animation.json";
+import "./SignAgreement.css";
 import Navbar from "../components/Navbar/Navbar";
-import cookie_loader from '../../assets/animations/cookie_loader.json'
+import cookie_loader from "../../assets/animations/cookie_loader.json";
+import { toast } from "react-toastify";
 
 export default function SignAgreement() {
   const { currentUser } = useAuth();
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 950);
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const navigate = useNavigate();
 
@@ -27,8 +43,8 @@ export default function SignAgreement() {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
+    phone_number: "",
     date: "",
-    address: "",
   });
 
   const handleChange = (e) => {
@@ -53,7 +69,7 @@ export default function SignAgreement() {
     const requestData = {
       name: formData.name,
       date: formData.date,
-      address: formData.address,
+      phone_number: formData.phone_number,
       signature: signature,
       uid: uid,
     };
@@ -68,7 +84,8 @@ export default function SignAgreement() {
       const result = await response.json();
       if (result) {
         console.log(result);
-        setFormData({name: '', date: '', address: ''})
+        toast.success(result.message)
+        setFormData({ name: "", phone_number: "", date: "" });
       } else {
         alert("Error generating PDF");
       }
@@ -80,84 +97,85 @@ export default function SignAgreement() {
     }
   };
 
-  
-
   return (
-    <div className="100vh" style={{height: 'calc(100vh - 120px)'}} >
-      <Navbar/>
+    <div className="100vh" style={{ height: "calc(100vh - 120px)" }}>
+      <Navbar is_client={true} />
       <div className="row g-0 h-100">
         {loading ? (
           <div className="col-12 d-flex justify-content-center align-items-center">
             <Lottie
-            animationData={cookie_loader}
-            loop={true}
-            style={{ width: "80%", height: "500px" }}
-          />{" "}
-          </div>        ): (
+              animationData={cookie_loader}
+              loop={true}
+              style={{ width: "80%", height: "500px" }}
+            />{" "}
+          </div>
+        ) : (
           <>
-          <div className="col-md-6 d-flex flex-column justify-content-center align-items-center">
-      <div className="text-start  w-75">
-      
+            <div className="col-md-6 d-flex flex-column justify-content-center align-items-center">
+             <div className="w-75">
+             <div className="mb-3 mt-5">
+                <label className="form-label">
+                  <h4>Name</h4>
+                </label>
+                <input
+                  type="text"
+                  className="form-control input_field"
+                  name="name"
+                  placeholder="Enter Your Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                />
+              </div>
 
-      <div className="mb-3 mt-5">
-        <label className="form-label"><h4>Name</h4></label>
-        <input
-          type="text"
-          className="form-control input_field"
-          name="name"
-          placeholder="Enter Your Name"
-          value={formData.name}
-          onChange={handleChange}
-        />
-      </div>
-      
-      <div className="mb-3">
-        <label className="form-label"><h4>Phone</h4></label>
-        <textarea
-          className="form-control input_field"
-          name="address"
-          value={formData.address}
-          onChange={handleChange}
-        ></textarea>
-      </div>
+              <div className="mb-3">
+                <label className="form-label">
+                  <h4>Phone</h4>
+                </label>
+                <input
+                  className="form-control input_field"
+                  name="phone_number"
+                  placeholder="Enter Your Phone Number"
+                  value={formData.phone_number}
+                  onChange={handleChange}
+                ></input>
+              </div>
 
-      <div className="w-100">
-        <h4>Your Signature</h4>
-        <SignatureCanvas
-        ref={sigCanvas}
-        penColor="black"
-        canvasProps={{
-          width: 600,
-          height: 200,
-          className: " canva",
-        }}
-      />
-      </div>
-      <div className="d-flex mt-2 gap-3">
-        <button onClick={clearSignature} className="clear">
-          Clear
-        </button>
-      
-
-      <button onClick={handleSubmit} className="submit">
-        Submit Agreement
-      </button>
-      <button onClick={() => navigate('/admin')}>Admin page</button>
-      </div>
-
-      </div>
-        </div>
-        <div className="col-md-6  d-flex justify-content-center align-items-center">
-          <Lottie
-            animationData={agreement_animation}
-            loop={true}
-            style={{ width: "100%", height: "auto" }}
-          />{" "}
-        </div></>
-
+              <div className="">
+                <h4>Your Signature</h4>
+                <SignatureCanvas
+                  ref={sigCanvas}
+                  penColor="black"
+                  canvasProps={{
+                    width: isMobile ? 300 : 650,
+                    height:  isMobile ? 200 : 150,
+                    className: "canva",
+                  }}
+                />
+              </div>
+              <div className="row g-2 p-0 m-0 d-flex  justify-content-center align-items-center mt-4 ">
+                <div className="col-md-6">
+                  <button onClick={clearSignature} className="clear">
+                    Clear
+                  </button>
+                </div>
+                <div className="col-md-6">
+                  <button onClick={handleSubmit} className="submit">
+                    Submit Agreement
+                  </button>
+                </div>
+              </div>
+             </div>
+            </div>
+            <div className="col-md-6  d-flex justify-content-center align-items-center">
+              <Lottie
+                animationData={agreement_animation}
+                loop={true}
+                style={{ width: "100%", height: "auto" }}
+              />{" "}
+            </div>
+          </>
         )}
       </div>
-      
     </div>
   );
 }

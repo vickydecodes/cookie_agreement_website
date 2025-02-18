@@ -3,7 +3,7 @@ import "./Navbar.css";
 import { BiMenuAltRight } from "react-icons/bi";
 import { NavLink } from "react-router-dom";
 
-export default function Navbar({ is_client = true}) {
+export default function Navbar({ is_client = false}) {
 
     if(is_client){
         return <nav className="navbar navbar-expand-lg sticky-top bg-body-tertiary p-md-4 px-3 pt-4 ">
@@ -11,7 +11,7 @@ export default function Navbar({ is_client = true}) {
           <a className="navbar-brand d-flex  justify-content-center align-items-center gap-4" href="#">
             <img
               src="/imgs/cookie_logo.jpeg"
-              height={ is_client ? '60' :"40" }
+              height={ "40" }
               style={{ border: "3px solid black" }}
               alt=""
             />
@@ -70,7 +70,7 @@ export default function Navbar({ is_client = true}) {
               </NavLink>
             </li>
             <li className="nav-item">
-              <NavLink className="nav-link" to="/admin">
+              <NavLink className="nav-link" to="/clients">
                 <h3>Clients</h3>
               </NavLink>
             </li>
