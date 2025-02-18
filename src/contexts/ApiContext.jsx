@@ -58,6 +58,7 @@ export function ApiProvider({ children }) {
       if (user) {
         navigate("/admin");
         setCookie('isAdmin', true)
+        setIsAdmin(true)
       } else {
         toast.error("Invalid Credentials");
       }
@@ -125,7 +126,6 @@ export function ApiProvider({ children }) {
 
   const fetch_clients = async () => {
     setLoading(true);
-
     try {
       const res = await getRequest(fetch_clients_url);
       setClients(res.clients);
@@ -275,6 +275,7 @@ export function ApiProvider({ children }) {
     complete_project,
     fetch_client,
     client,
+    isAdmin
   };
 
   if (loading) {
