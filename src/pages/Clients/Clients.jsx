@@ -38,7 +38,7 @@ export default function Clients() {
       toast.alert("We tracked you. Dont try to log in .");
       return navigate("/login");
     }
-  });
+  },[]);
   
 
   return (
