@@ -280,7 +280,7 @@ export function ApiProvider({ children }) {
 
   if (loading) {
     console.log("Loading state: ", loading);
-    return <Loading />;
+   /// return <Loading />;
   }
 
   return <ApiContext.Provider value={value}>{children}</ApiContext.Provider>;
