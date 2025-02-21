@@ -194,9 +194,9 @@ export function ApiProvider({ children }) {
 
   /// USE EFFECT HOOKS
 
-  useEffect(() => {
-    fetch_clients();
-  }, []);
+  ////useEffect(() => {
+  ////  fetch_clients();
+  ////}, []);
 
   /// ERROR HANDLING FOR FIREBASE ERRORS
 
